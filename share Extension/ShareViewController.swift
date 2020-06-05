@@ -16,6 +16,7 @@ class ShareViewController: SLComposeServiceViewController {
     let keyName: String = "shareData"
     var titleArray = [String]()
     var cellArrey = [String]()
+    var hozonNumber: Int?
     var saveData: UserDefaults = UserDefaults.standard
     
     
@@ -60,9 +61,15 @@ class ShareViewController: SLComposeServiceViewController {
     
     let titleDefaults : UserDefaults = UserDefaults(suiteName:"group.com.litech.kennsakuhozonn")!
  
-       cellArrey.append(contentText!)
-       print(cellArrey)
-      titleDefaults.set(cellArrey, forKey:"number")
+    
+    if titleDefaults.object(forKey: "number") as? [String] != nil{
+        cellArrey = titleDefaults.object(forKey: "number") as! [String]
+    }
+    
+    cellArrey.append(contentText!)
+
+    print(cellArrey)
+    titleDefaults.set(cellArrey, forKey:"number")
     
        // shareExtension で NSURL を取得
     if (itemProvider?.hasItemConformingToTypeIdentifier(puclicURL))! {
@@ -73,6 +80,10 @@ class ShareViewController: SLComposeServiceViewController {
                    // 保存処理
                    // ----------
                    let sharedDefaults: UserDefaults = UserDefaults(suiteName: self.suiteName)!
+                
+                if sharedDefaults.object(forKey: self.keyName) as? [String] != nil{
+                    self.titleArray = sharedDefaults.object(forKey: self.keyName) as! [String]
+                    }
                 self.titleArray.append(url.absoluteString!)
                 sharedDefaults.set(self.titleArray, forKey: self.keyName)
                 print(self.titleArray)
@@ -83,17 +94,33 @@ class ShareViewController: SLComposeServiceViewController {
            })
         
  
-        
        }
       
-      
-    
-   }
+    func openContainerApp() {
+         print("asdf")
+           var responder: UIResponder? = self as UIResponder
+           let selector = #selector(openURL(a:))
+
+           while responder != nil {
+            if responder!.responds(to: selector) && responder != self {
+             responder!.perform(selector, with: URL(string: "myapp://next")!)
+             return
+            }
+            responder = responder?.next
+           }
+       }
+
+   
+    }
     
     
     override func configurationItems() -> [Any]! {
         // To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
         return []
     }
+    
+    @objc func openURL(a url: URL) {
+            return
+        }
 
 }
