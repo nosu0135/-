@@ -11,6 +11,7 @@ import UIKit
 class TableViewCell: UITableViewCell {
  
     @IBOutlet var cellLabel : UILabel!
+    @IBOutlet var cellImage: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

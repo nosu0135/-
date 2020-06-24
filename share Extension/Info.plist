@@ -29,7 +29,7 @@
 				<key>NSExtensionActivationSupportsText</key>
 				<true/>
 				<key>NSExtensionActivationSupportsImageWithMaxCount </key>
-				<integer>3</integer>
+				<integer>9</integer>
 				<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
 				<integer>9</integer>
 			</dict>

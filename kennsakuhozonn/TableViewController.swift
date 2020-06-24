@@ -14,8 +14,11 @@ class TableViewController: UITableViewController {
     @IBOutlet var table: UITableView!
    
     var titleArrey = [String]()
+    var imageArrey = [Data]()
+    var cellImageArrey = [UIImage]()
     var cellArrey = [String]()
     var rowNumber: Int?
+    var urlNum: Int?
     let suiteName: String = "group.com.litech.kennsakuhozonn"
     let keyName: String = "shareData"
     var saveData: UserDefaults = UserDefaults.standard
@@ -45,14 +48,18 @@ class TableViewController: UITableViewController {
         rowNumber = cellArrey.count
         
         //URLを取り出す
-                let sharedDefaults: UserDefaults = UserDefaults(suiteName: self.suiteName)!
-             
-             titleArrey = sharedDefaults.object(forKey: self.keyName) as! [String]
-        
-//        if saveData.array(forKey: "title") != nil {
-//            titleArrey = saveData.array(forKey: "title") as! [String]
-//            table.reloadData()
-//        }
+        let sharedDefaults: UserDefaults = UserDefaults(suiteName: self.suiteName)!
+        if sharedDefaults.object(forKey: self.keyName) != nil {
+            titleArrey = sharedDefaults.object(forKey: self.keyName) as! [String]
+            
+        }
+        if sharedDefaults.object(forKey: "image") != nil {
+            imageArrey = sharedDefaults.object(forKey: "image") as! [Data]
+        }
+        //        if saveData.array(forKey: "title") != nil {
+        //            titleArrey = saveData.array(forKey: "title") as! [String]
+        //            table.reloadData()
+        //        }
     }
 
     
@@ -72,7 +79,7 @@ class TableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-           return 85
+           return 95
        }
           
 
@@ -80,6 +87,8 @@ class TableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Custom") as? TableViewCell
 
         cell?.cellLabel?.text = cellArrey[indexPath.row]
+        print(imageArrey[indexPath.row])
+        cell?.cellImage?.image = UIImage(data: imageArrey[indexPath.row])!
         return cell!
     }
     
@@ -108,15 +117,22 @@ class TableViewController: UITableViewController {
         titleArrey.remove(at: sourceIndexPath.row)
         titleArrey.insert(url, at: destinationIndexPath.row)
         
+        let image = imageArrey[sourceIndexPath.row]
+        imageArrey.remove(at: sourceIndexPath.row)
+        imageArrey.insert(image, at: destinationIndexPath.row)
+        
         let chengeDefaults : UserDefaults = UserDefaults(suiteName: self.suiteName)!
           
           chengeDefaults.set(cellArrey, forKey: "number")
           chengeDefaults.set(titleArrey, forKey: self.keyName)
+        chengeDefaults.set(imageArrey, forKey: "image")
     }
     //削除機能
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         cellArrey.remove(at: indexPath.row)
         titleArrey.remove(at: indexPath.row)
+        imageArrey.remove(at: indexPath.row)
+        
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
         let deleteDefaults : UserDefaults = UserDefaults(suiteName: self.suiteName)!
         
@@ -132,5 +148,26 @@ class TableViewController: UITableViewController {
          }
          return .none
      }
+    
+    //左スワイプ
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .normal, title: "詳細") { (ctxAction, view, completionHandler) in
+            self.urlNum = indexPath.row
+            self.goDetail()
+            completionHandler(true)
+        }
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+    
+    @objc func goDetail(){
+        performSegue(withIdentifier: "toDetail", sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toDetail"{
+        let vc = segue.destination as! urlDetailsViewController
+        vc.urlcelectNum = urlNum
+        }
+    }
 
 }

@@ -10,6 +10,14 @@ import UIKit
 
 class startTableViewCell: UITableViewCell {
     @IBOutlet var startTableViewCellLabel: UILabel!
+    @IBOutlet var startTableViewImageView: UIImageView!{
+           didSet{
+               // 角を丸くする
+               startTableViewImageView.layer.cornerRadius = 85 * 0.5
+               startTableViewImageView.clipsToBounds = true
+            
+           }
+       }
     
     override func awakeFromNib() {
         super.awakeFromNib()

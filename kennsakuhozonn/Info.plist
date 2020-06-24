@@ -71,5 +71,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>画像を読み込む</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>画像を読み込みます</string>
 </dict>
 </plist>
