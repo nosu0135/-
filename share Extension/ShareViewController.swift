@@ -10,7 +10,7 @@ import UIKit
 import Social
 import MobileCoreServices
 
-class ShareViewController: SLComposeServiceViewController {
+class ShareViewController: SLComposeServiceViewController,ListViewControllerDelegate {
     
     let suiteName: String = "group.com.litech.kennsakuhozonn"
     let keyName: String = "shareData"
@@ -19,6 +19,13 @@ class ShareViewController: SLComposeServiceViewController {
     var cellArrey = [String]()
     var hozonNumber: Int?
     var saveData: UserDefaults = UserDefaults.standard
+    lazy var ratingItem: SLComposeSheetConfigurationItem = {
+        var item = SLComposeSheetConfigurationItem()
+        item!.title = "カテゴリー"
+        item!.value = "なし"
+        item!.tapHandler = self.showListViewControllerOfRating
+        return item!
+    }()
     
     
     override func viewDidLoad() {
@@ -34,32 +41,29 @@ class ShareViewController: SLComposeServiceViewController {
         // postName
         let controller: UIViewController = self.navigationController!.viewControllers.first!
         controller.navigationItem.rightBarButtonItem!.title = "保存"
+        
     }
     
+    
+    override func configurationItems() -> [Any]! {
+        return [ratingItem]
+    }
+    
+    //カテゴリーボタンを押した時
+    func showListViewControllerOfRating() {
+        performSegue(withIdentifier: "goImage", sender: nil)
+    }
+    
+    func listViewController(sender: ListViewController, selectedValue: String) {
+        ratingItem.value = selectedValue
+        popConfigurationViewController()
+    }
     override func isContentValid() -> Bool {
+        
         
         self.charactersRemaining = self.contentText.count as NSNumber?
         print(self.contentText.count)
         let canPost: Bool = self.contentText.count > 0
-        
-        /*
-         let inputItem: Bool = (self.extensionContext?.inputItems.count)! > 0
-         
-         guard inputItem == true else {
-         let alert: UIAlertController = UIAlertController(title:"失敗", message: "画像がありません",preferredStyle: .alert)
-         //OKボタン
-         alert.addAction(
-         UIAlertAction(title: "OK",
-         style: .default,
-         handler: {action in
-         //ボタンが押された時の動作
-         }))
-         //アラートを表示
-         present(alert,animated: true, completion: nil)
-         //うまく機能しなかったため返り値を失敗にさせる
-         return false
-         }
-         */
         
         
         if canPost {
@@ -91,7 +95,7 @@ class ShareViewController: SLComposeServiceViewController {
             present(alert,animated: true, completion: nil)
             return
         }
-
+        
         
         
         let extensionItem: NSExtensionItem = self.extensionContext?.inputItems.first as! NSExtensionItem
@@ -184,11 +188,6 @@ class ShareViewController: SLComposeServiceViewController {
         
         
     }
-
-    override func configurationItems() -> [Any]! {
-        // To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
-        return []
-    }
     
     @objc func openURL(a url: URL) {
         let _ = URL(string: "myapp://next")
@@ -196,6 +195,82 @@ class ShareViewController: SLComposeServiceViewController {
         // iOS 10以降利用可能
         
         return
+    }
+    
+}
+
+
+@objc(ListViewControllerDelegate)
+protocol ListViewControllerDelegate {
+    @objc optional func listViewController(sender: ListViewController, selectedValue: String)
+}
+
+class ListViewController:  UIViewController,UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    @IBOutlet var collectionView: UICollectionView!
+    
+    var delegate: ListViewControllerDelegate?
+    var itemList: [String] = []
+    var selectedValue: String!
+    var textTitleArrey = [String]()
+    var imageArrey = [Data]()
+    
+    let suiteName: String = "group.com.litech.kennsakuhozonn"
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        collectionView.isUserInteractionEnabled = true
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        // レイアウトを調整
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 120, height: 120)
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        collectionView.collectionViewLayout = layout
+        
+        
+        //        collectionView.register(UINib(nibName: "CollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "CustomCell")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        let sharedDefaults: UserDefaults = UserDefaults(suiteName: self.suiteName)!
+        if sharedDefaults.array(forKey: "mainImage") != nil{
+            textTitleArrey = sharedDefaults.object(forKey: "mainTitle") as! [String]
+            imageArrey = sharedDefaults.object(forKey: "mainImage") as! [Data]
+            print(imageArrey.count)
+        }
+        collectionView.reloadData()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return imageArrey.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCell", for: indexPath) as! CollectionViewCell
+        print(textTitleArrey)
+        cell.name?.text = textTitleArrey[indexPath.row]
+        cell.imageView?.image = UIImage(data: imageArrey[indexPath.item])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let horizontalSpace : CGFloat = 10
+        let cellSize : CGFloat = view.bounds.width / 3 - horizontalSpace
+        return CGSize(width: cellSize, height: cellSize)
+    }
+    
+    //セルがタップされたら
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+         print("ここにいるよ")
+        if let theDelegate = delegate{
+            theDelegate.listViewController?(sender: self, selectedValue: textTitleArrey[indexPath.row])
+        }
+       self.dismiss(animated: true, completion: nil)
+    }
+    @IBAction func save(){
+        print("ここにいるよ")
+       self.dismiss(animated: true, completion: nil)
     }
     
 }

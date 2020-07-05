@@ -17,10 +17,11 @@ class startTableViewController: UITableViewController {
     var saveData: UserDefaults = UserDefaults.standard
     var arreyNum: Int?
     var number: Int?
+    let suiteName: String = "group.com.litech.kennsakuhozonn"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+     
         startTable.dataSource = self
         startTable.delegate = self
         startTable.register (UINib(nibName: "startTableViewCell", bundle: nil),forCellReuseIdentifier:"Customcell")
@@ -36,6 +37,8 @@ class startTableViewController: UITableViewController {
             titleArray = saveData.array(forKey: "title") as! [String]
             imageArrey = saveData.array(forKey: "image") as! [Data]
             print(titleArray)
+            print(titleArray.count)
+            print(imageArrey.count)
             startTable.reloadData()
         }
     }
@@ -58,7 +61,6 @@ class startTableViewController: UITableViewController {
  
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Customcell") as! startTableViewCell
-        
         cell.startTableViewCellLabel?.text = titleArray[indexPath.row]
         cell.startTableViewImageView.image = UIImage(data:imageArrey[indexPath.row])
         
@@ -73,10 +75,12 @@ class startTableViewController: UITableViewController {
        }
 
 
-    @IBAction func add(){
+    @IBAction func add(sender:Any){
         performSegue(withIdentifier: "toNew", sender: nil)
     }
+     
     
+  
     //並び替え機能
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let todo = titleArray[sourceIndexPath.row]
@@ -88,7 +92,12 @@ class startTableViewController: UITableViewController {
         imageArrey.remove(at: sourceIndexPath.row)
         imageArrey.insert(imageDo, at: destinationIndexPath.row)
         self.saveData.set(imageArrey, forKey: "image")
+        
+        let sharedDefaults: UserDefaults = UserDefaults(suiteName: self.suiteName)!
+        sharedDefaults.set(titleArray, forKey: "mainTitle")
+        sharedDefaults.set(imageArrey, forKey: "mainImage")
     }
+    
      //削除機能
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         titleArray.remove(at: indexPath.row)
@@ -96,6 +105,10 @@ class startTableViewController: UITableViewController {
         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
         self.saveData.set(titleArray, forKey: "title")
         self.saveData.set(imageArrey, forKey: "image")
+        
+        let sharedDefaults: UserDefaults = UserDefaults(suiteName: self.suiteName)!
+        sharedDefaults.set(titleArray, forKey: "mainTitle")
+        sharedDefaults.set(imageArrey, forKey: "mainImage")
     }
      //削除スワイプ機能
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {

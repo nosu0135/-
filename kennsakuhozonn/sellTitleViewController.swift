@@ -17,7 +17,8 @@ class sellTitleViewController: UIViewController,UITextFieldDelegate, UIImagePick
     @IBOutlet var cellImageView: UIImageView!{
         didSet{
             cellImageView.image = UIImage(named: "images.png")
-         
+            let data = UIImage(named: "images.png")
+            noImageData = data?.pngData()
             // 角を丸くする
             cellImageView.layer.cornerRadius = 153 * 0.5
             cellImageView.clipsToBounds = true
@@ -30,8 +31,10 @@ class sellTitleViewController: UIViewController,UITextFieldDelegate, UIImagePick
     var imageArrey = [Data]()
     var cellNumber: Int? = 0
     var outout: AVCapturePhotoOutput?
+    var noImageData: Data!
     var photoData: Data!
     var saveData: UserDefaults = UserDefaults.standard
+    let suiteName: String = "group.com.litech.kennsakuhozonn"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,10 +51,10 @@ class sellTitleViewController: UIViewController,UITextFieldDelegate, UIImagePick
         
         if saveData.array(forKey: "title") != nil {
             textTitleArray = saveData.object(forKey: "title") as! [String]
+            imageArrey = saveData.object(forKey:"image") as! [Data]
         }
         
         if celectNum != nil{
-            imageArrey = saveData.object(forKey:"image") as! [Data]
             cellTitleText.text = textTitleArray[celectNum!]
             cellImage = UIImage(data:imageArrey[celectNum!])
             cellImageView.image = cellImage
@@ -121,7 +124,7 @@ class sellTitleViewController: UIViewController,UITextFieldDelegate, UIImagePick
          dismiss(animated: true,completion: nil)
         }
 
- 
+    
     @IBAction func save(){
         guard cellTitleText.text?.isEmpty == false else {
             
@@ -137,22 +140,37 @@ class sellTitleViewController: UIViewController,UITextFieldDelegate, UIImagePick
             present(alert,animated: true, completion: nil)
             return
         }
-
-//        cellImage = cellImageView.image
-//        let data = cellImage.pngData()!
-
+        
+        //        cellImage = cellImageView.image
+        //        let data = cellImage.pngData()!
+        
         if celectNum == nil {
-            print("aaaa")
             textTitleArray.append(cellTitleText.text!)
-            imageArrey.append(photoData!)
+            switch photoData {
+            case nil:
+                print("ここだよ")
+                imageArrey.append(noImageData!)
+            default:
+                imageArrey.append(photoData!)
+            }
         } else {
             textTitleArray[celectNum!] =  cellTitleText.text!
-            imageArrey[celectNum!] = photoData
+            switch photoData {
+            case nil:
+                imageArrey[celectNum!] = noImageData
+            default:
+                imageArrey[celectNum!] = photoData
+            }
         }
         print(imageArrey.count)
         
         saveData.set(textTitleArray, forKey: "title")
         saveData.set(imageArrey, forKey: "image")
+        let sharedDefaults: UserDefaults = UserDefaults(suiteName: self.suiteName)!
+        sharedDefaults.set(textTitleArray, forKey: "mainTitle")
+        sharedDefaults.set(imageArrey, forKey: "mainImage")
+        
+        
         //alertを出す
         let alert: UIAlertController = UIAlertController(title:"保存", message: "保存が完了しました",
                                                          preferredStyle: .alert)

@@ -23,7 +23,7 @@
                     <navigationItem key="navigationItem" title="題名" id="7wa-9R-Puh">
                         <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="OFt-XZ-KmW">
                             <connections>
-                                <action selector="add" destination="IDk-0y-xtb" id="eKq-be-7YS"/>
+                                <action selector="addWithSender:" destination="IDk-0y-xtb" id="AO1-3v-Y6w"/>
                                 <segue destination="5an-Fn-u89" kind="show" identifier="toNew" id="oyA-nq-6Bl"/>
                             </connections>
                         </barButtonItem>
@@ -123,16 +123,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="S8M-lH-kQV">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="S8M-lH-kQV" id="AiE-jV-JdY">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="wt8-Wn-rxo" id="3Nm-cP-QOt"/>
                             <outlet property="delegate" destination="wt8-Wn-rxo" id="mIv-VT-fFp"/>
@@ -233,6 +223,11 @@
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yuo-1m-oaj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ttt-1B-QJf">
+                    <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <state key="normal" title="Button"/>
+                </button>
             </objects>
             <point key="canvasLocation" x="-2201" y="94"/>
         </scene>

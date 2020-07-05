@@ -138,8 +138,7 @@ class TableViewController: UITableViewController {
         
         deleteDefaults.set(cellArrey, forKey: "number")
         deleteDefaults.set(titleArrey, forKey: self.keyName)
-        print(cellArrey)
-        print(titleArrey)
+        deleteDefaults.set(imageArrey, forKey: "image")
     }
       //削除スワイプ機能
      override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
